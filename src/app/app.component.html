@@ -1,0 +1,69 @@
+<div class="ide-container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>Project Converter</h2>
+      <div class="upload-area">
+        <label for="file-upload" class="upload-btn">
+          <span *ngIf="!selectedFileName">Upload .ZIP</span>
+          <span *ngIf="selectedFileName" class="text-truncate">{{ selectedFileName }}</span>
+          <span *ngIf="isConverting" class="spinner-sm"></span>
+        </label>
+        <input id="file-upload" type="file" (change)="onFileSelected($event)" accept=".zip" [disabled]="isConverting">
+      </div>
+      <button class="action-btn primary" (click)="convertProject()" [disabled]="!selectedFile || isConverting">
+        {{ isConverting ? 'Converting...' : 'Convert' }}
+      </button>
+      <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+    </div>
+
+    <div class="file-explorer">
+      <div class="explorer-title">
+        EXPLORER
+        <span *ngIf="downloadId" class="status-success">✔ Done</span>
+      </div>
+      <div class="file-list">
+        <div *ngFor="let file of convertedFiles" (click)="onFileSelect(file)" class="file-item"
+          [class.active]="file.originalCode === originalCode">
+          <i class="file-icon">📄</i>
+          <span class="file-name">{{ file.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="action-btn secondary" (click)="downloadZip()" [disabled]="!downloadId">
+        Download ZIP
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- RAW VIEW REMOVED (Button removed per request) -->
+
+    <div class="editor-wrapper two-pane" *ngIf="convertedFiles.length > 0; else emptyState">
+      <!-- Original Code -->
+      <div class="editor-pane">
+        <div class="pane-header original">Original (C#)</div>
+        <div #originalContainer class="std-editor"></div>
+      </div>
+
+      <!-- Converted Code -->
+      <div class="editor-pane">
+        <div class="pane-header modified">Converted (Spring Boot)</div>
+        <div #modifiedContainer class="std-editor"></div>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <div class="empty-content">
+          <div class="icon">🚀</div>
+          <h3>Ready to Convert</h3>
+          <p>Upload a .NET Core Web API project (zip) to generate the Spring Boot equivalent.</p>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>
